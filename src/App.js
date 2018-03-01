@@ -24,7 +24,6 @@ class App extends Component {
     event.preventDefault();
 
     const accounts = await web3.eth.getAccounts();
-    
     this.setState({ message: 'Waiting for transaction to be verified...' });
 
     await lottery.methods.enter().send({
@@ -35,35 +34,51 @@ class App extends Component {
     this.setState({ message: 'Successfully entered the lottery' });
   }
 
+  onClick = async() => {
+    const accounts = await web3.eth.getAccounts();
+    this.setState({ message: 'Picking a Winner!!' });
+    
+    await lottery.methods.pickWinner().send({ from: accounts[0] });
+    
+    this.setState({ message: 'A winner has been picked!' })
+  }
+
   render() {
 
-    return (
-      <div>
+    return <div>
         <h2>Lottery Contract</h2>
         <p>This contract is managed by {this.state.manager}</p>
-        <p>There are currently <strong>{this.state.players.length}</strong> people entered
-          competing to win <strong>{web3.utils.fromWei(this.state.balance, 'ether')}</strong> ether!
+        <p>
+          There are currently <strong>
+            {this.state.players.length}
+          </strong> people entered competing to win <strong>
+            {web3.utils.fromWei(this.state.balance, "ether")}
+          </strong> ether!
         </p>
-        <hr/>
+        <hr />
 
-        <form onSubmit= {this.onSubmit} action="">
+        <form onSubmit={this.onSubmit} action="">
           <h4>Want to try your luck?</h4>
           <div>
             <label>Amount of ether to enter</label>
-            <input 
-            value = {this.state.value}
-            onChange = { event => this.setState({ value: event.target.value })}/>
+            <input value={this.state.value} onChange={event => this.setState(
+                  { value: event.target.value }
+                )} />
           </div>
           <button>Enter</button>
         </form>
 
-        <hr/>
+        <hr />
 
         <div>
           <h4>Transaction Status: {this.state.message}</h4>
         </div>
-      </div>
-    );
+
+        <hr />
+            <h4>Ready to pick a winner?</h4>
+            <button onClick={this.onClick}> Pick a winner! </button>
+        <hr />
+      </div>;
   }
 }
 
